@@ -47,7 +47,8 @@ void Mono::setXinXout(std::shared_ptr<dai::Pipeline> pipeline) {
 void Mono::setupQueues(std::shared_ptr<dai::Device> device) {
     if(ph->getParam<bool>(getROSNode(), "i_publish_topic")) {
         monoQ = device->getOutputQueue(monoQName, ph->getParam<int>(getROSNode(), "i_max_q_size"), false);
-        auto tfPrefix = getTFPrefix(getName());
+        std::string frame_prefix = ph->getParam<std::string>(getROSNode(), "i_frame_prefix");
+        auto tfPrefix = getTFPrefix(frame_prefix, getName());
         imageConverter = std::make_unique<dai::ros::ImageConverter>(tfPrefix + "_camera_optical_frame", false);
         monoPub = it.advertiseCamera(getName() + "/image_raw", 1);
         infoManager = std::make_shared<camera_info_manager::CameraInfoManager>(ros::NodeHandle(getROSNode(), getName()), "/" + getName());

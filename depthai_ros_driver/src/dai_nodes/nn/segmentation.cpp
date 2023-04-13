@@ -54,7 +54,8 @@ void Segmentation::segmentationCB(const std::string& /*name*/, const std::shared
     sensor_msgs::Image img_msg;
     std_msgs::Header header;
     header.stamp = currTime;
-    header.frame_id = std::string(getROSNode().getNamespace()) + "_rgb_camera_optical_frame";
+    std::string frame_prefix = ph->getParam<std::string>(getROSNode(), "i_frame_prefix");
+    header.frame_id = frame_prefix + "rgb_camera_optical_frame";
     nnInfo.header = header;
     imgBridge = cv_bridge::CvImage(header, sensor_msgs::image_encodings::BGR8, cv_frame);
     imgBridge.toImageMsg(img_msg);

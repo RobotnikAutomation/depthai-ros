@@ -44,9 +44,11 @@ void Stereo::setupQueues(std::shared_ptr<dai::Device> device) {
     stereoQ = device->getOutputQueue(stereoQName, ph->getParam<int>(getROSNode(), "i_max_q_size"), false);
     std::string tfPrefix;
     if(ph->getParam<bool>(getROSNode(), "i_align_depth")) {
-        tfPrefix = getTFPrefix("rgb");
+        std::string frame_prefix = ph->getParam<std::string>(getROSNode(), "i_frame_prefix");
+        tfPrefix = getTFPrefix(frame_prefix, "rgb");
     } else {
-        tfPrefix = getTFPrefix("right");
+        std::string frame_prefix = ph->getParam<std::string>(getROSNode(), "i_frame_prefix");
+        tfPrefix = getTFPrefix(frame_prefix, "right");
     }
     imageConverter = std::make_unique<dai::ros::ImageConverter>(tfPrefix + "_camera_optical_frame", false);
 

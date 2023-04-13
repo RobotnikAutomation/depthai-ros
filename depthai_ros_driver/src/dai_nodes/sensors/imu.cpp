@@ -26,8 +26,8 @@ void Imu::setXinXout(std::shared_ptr<dai::Pipeline> pipeline) {
 
 void Imu::setupQueues(std::shared_ptr<dai::Device> device) {
     imuQ = device->getOutputQueue(imuQName, ph->getParam<int>(getROSNode(), "i_max_q_size"), false);
-    auto tfPrefix = std::string(getROSNode().getNamespace()) + "_" + getName();
-    tfPrefix.erase(0, 1);
+    std::string frame_prefix = ph->getParam<std::string>(getROSNode(), "i_frame_prefix");
+    auto tfPrefix = frame_prefix + getName();
     auto imuMode = static_cast<dai::ros::ImuSyncMethod>(0);
     imuConverter = std::make_unique<dai::ros::ImuConverter>(tfPrefix + "_frame", imuMode, 0.0, 0.0);
     imuQ->addCallback(std::bind(&Imu::imuQCB, this, std::placeholders::_1, std::placeholders::_2));

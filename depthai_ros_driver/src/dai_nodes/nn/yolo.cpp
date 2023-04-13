@@ -32,8 +32,8 @@ void Yolo::setXinXout(std::shared_ptr<dai::Pipeline> pipeline) {
 
 void Yolo::setupQueues(std::shared_ptr<dai::Device> device) {
     nnQ = device->getOutputQueue(nnQName, ph->getParam<int>(getROSNode(), "i_max_q_size"), false);
-    auto tfPrefix = std::string(getROSNode().getNamespace());
-    tfPrefix.erase(0, 1);
+    std::string frame_prefix = ph->getParam<std::string>(getROSNode(), "i_frame_prefix");
+    auto tfPrefix = frame_prefix + getName();
     detConverter = std::make_unique<dai::ros::ImgDetectionConverter>(
         tfPrefix + "_rgb_camera_optical_frame", imageManip->initialConfig.getResizeConfig().width, imageManip->initialConfig.getResizeConfig().height, false);
     nnQ->addCallback(std::bind(&Yolo::yoloCB, this, std::placeholders::_1, std::placeholders::_2));
